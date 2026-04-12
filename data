@@ -1,0 +1,293 @@
+#term deposit data definition:
+{
+          "data": {
+            "account": {
+              "linkedAccRef": "1ca55b61-8557-4d65-96af-304e86246b99",
+              "maskedAccNumber": "XXXXXXXX9757",
+              "type": "term_deposit",
+              "version": "2.0.0",
+              "profile": {
+                "holders": {
+                  "type": "SINGLE",
+                  "holder": [
+                    {
+                      "address": "H.No. 15&#10;Sharaf Zila&#10;Bardhaman 386771",
+                      "ckycCompliance": "false",
+                      "dob": "1991-07-23",
+                      "email": "taimur45@setu-dummy.com",
+                      "mobile": "8143771190",
+                      "name": "Vivaan Rout",
+                      "nominee": "REGISTERED",
+                      "pan": "VAKPC6055F"
+                    }
+                  ]
+                }
+              },
+              "summary": {
+                "accountType": "SWEEP",
+                "branch": "Jayanagar 7th Block",
+                "compoundingFrequency": "HALF-YEARLY",
+                "currentValue": "57502.52",
+                "description": "",
+                "ifsc": "FBBC0524211",
+                "interestComputation": "COMPOUND",
+                "interestOnMaturity": "",
+                "interestPayout": "YEARLY",
+                "interestPeriodicPayoutAmount": "",
+                "interestRate": "3",
+                "maturityAmount": "158748.54",
+                "maturityDate": "2026-06-09T15:02:09+00:00",
+                "openingDate": "2025-12-23T15:02:09+00:00",
+                "principalAmount": "493380.17",
+                "recurringAmount": "35.02",
+                "recurringDepositDay": "15",
+                "tenureDays": "365",
+                "tenureMonths": "144",
+                "tenureYears": "12"
+              },
+              "transactions": {
+                "startDate": "2024-03-17",
+                "endDate": "2026-03-17",
+                "transaction": [
+                  {
+                    "amount": "46109.35",
+                    "balance": "372589.12",
+                    "mode": "OTHERS",
+                    "narration": "OTHERS/IN/796506304353/Raunak Amble/DYBJ/15091389",
+                    "reference": "030440329",
+                    "transactionTimestamp": "2026-02-27T13:06:12+00:00",
+                    "txnId": "PUSH13211077109531",
+                    "type": "INTEREST",
+                    "valueDate": "2026-02-28T13:06:12+00:00"
+                  },
+                  {
+                    "amount": "18055.66",
+                    "balance": "75539.24",
+                    "mode": "CARD",
+                    "narration": "CARD/IN/873179370068/Ishita Tripathi/KBEW/24324609",
+                    "reference": "241811069",
+                    "transactionTimestamp": "2025-08-24T19:42:47+00:00",
+                    "txnId": "QJDA63356383648381",
+                    "type": "INTEREST",
+                    "valueDate": "2025-08-25T19:42:47+00:00"
+                  },
+                  {
+                    "amount": "6702.64",
+                    "balance": "107126.69",
+                    "mode": "ATM",
+                    "narration": "ATM/TD/553168078851/Ivana Ramaswamy/TTFK/57322242",
+                    "reference": "318861394",
+                    "transactionTimestamp": "2026-01-24T10:31:14+00:00",
+                    "txnId": "WNBJ40823023203608",
+                    "type": "TDS",
+                    "valueDate": "2026-01-25T10:31:14+00:00"
+                  },
+                 "linkRefNumber": "1ca55b61-8557-4d65-96af-304e86246b99",
+          "FIstatus": "READY",
+          "maskedAccNumber": "XXXXXXXX9757"
+        }
+      ],
+      "fipID": "setu-fip"
+    }
+  ],
+  "status": "COMPLETED",
+  "format": "json",
+  "dataRange": {
+    "from": "2024-03-17T15:00:37.000Z",
+    "to": "2026-03-17T15:00:37.000Z"
+  }
+
+   #recurring deposit definition:
+
+   {
+          "data": {
+            "account": {
+              "linkedAccRef": "aec9c088-00ff-4af0-962c-236816ac4680",
+              "maskedAccNumber": "XXXXXXXX9161",
+              "type": "recurring_deposit",
+              "version": "2.0.0",
+              "profile": {
+                "holders": {
+                  "type": "SINGLE",
+                  "holder": [
+                    {
+                      "address": "10/432&#10;Srinivasan Zila, Siliguri 058025",
+                      "ckycCompliance": "true",
+                      "dob": "2007-12-05",
+                      "email": "rati11@setu-dummy.com",
+                      "mobile": "9239994534",
+                      "name": "Yuvaan Sen",
+                      "nominee": "NOT-REGISTERED",
+                      "pan": "ZEFYV4415F"
+                    }
+                  ]
+                }
+              },
+              "summary": {
+                "accountType": "RECURRING",
+                "branch": "Jayanagar 7th Block",
+                "compoundingFrequency": "QUARTERLY",
+                "currentValue": "457464.49",
+                "description": "",
+                "ifsc": "UOUX0892406",
+                "interestComputation": "COMPOUND",
+                "interestOnMaturity": "",
+                "interestPayout": "QUARTERLY",
+                "interestPeriodicPayoutAmount": "",
+                "interestRate": "3",
+                "maturityAmount": "475917.14",
+                "maturityDate": "2026-06-09T15:02:09+00:00",
+                "openingDate": "2025-12-23T15:02:09+00:00",
+                "principalAmount": "273398.72",
+                "recurringAmount": "19.16",
+                "recurringDepositDay": "15",
+                "tenureDays": "365",
+                "tenureMonths": "144",
+                "tenureYears": "12"
+              },
+    { transactions:
+                    "amount": "9169.74",
+                    "balance": "275653.13",
+                    "mode": "UPI",
+                    "narration": "UPI/OP/209335408116/Aniruddh Tripathi/FKWI/91776589",
+                    "reference": "386491867",
+                    "transactionTimestamp": "2025-12-17T07:33:23+00:00",
+                    "txnId": "TPCN16232347958642",
+                    "type": "OPENING",
+                    "valueDate": "2025-12-18T07:33:23+00:00"
+                  },
+                  {
+                    "amount": "10409.36",
+                    "balance": "384581.95",
+                    "mode": "FT",
+                    "narration": "FT/OT/966249170554/Yuvraj  Dugar/VDPH/01568242",
+                    "reference": "605972532",
+                    "transactionTimestamp": "2025-04-22T03:32:00+00:00",
+                    "txnId": "YWDF11985390264658",
+                    "type": "OTHERS",
+                    "valueDate": "2025-04-23T03:32:00+00:00"
+                  },
+                  {
+                    "amount": "34324.71",
+                    "balance": "379580.77",
+                    "mode": "ATM",
+                    "narration": "ATM/OP/810864050508/Rasha Chana/QNIJ/09620487",
+                    "reference": "955046534",
+                    "transactionTimestamp": "2024-11-06T08:54:56+00:00",
+                    "txnId": "LLFR87460423800114",
+                    "type": "OPENING",
+                    "valueDate": "2024-11-07T08:54:56+00:00"
+                  },
+                  {
+                    "amount": "27127.36",
+                    "balance": "448776.96",
+                    "mode": "UPI",
+                    "narration": "UPI/IN/699943784748/Pari Jain/JUTL/39472613",
+                    "reference": "728205302",
+                    "transactionTimestamp": "2024-06-06T00:43:13+00:00",
+                    "txnId": "WDGR73410091392730",
+                    "type": "INTEREST",
+                    "valueDate": "2024-06-07T00:43:13+00:00"
+                  }
+                ]
+              }
+            }
+          },
+          "linkRefNumber": "aec9c088-00ff-4af0-962c-236816ac4680",
+          "FIstatus": "READY",
+          "maskedAccNumber": "XXXXXXXX9161"
+        }
+
+     normal deposit account( savings + current)
+{
+  "id": "5ddfff21-72ab-43ff-b4a2-aaa9d901e133",
+  "consentId": "1eeda429-821e-4c53-a30b-47d71f7609cc",
+  "fips": [
+    {
+      "accounts": [
+        {
+          "data": {
+            "account": {
+              "linkedAccRef": "8a38eaaa-6308-4233-9430-35baaf4838df",
+              "maskedAccNumber": "XXXXXXXX6183",
+              "type": "deposit",
+              "version": "2.0.0",
+              "profile": {
+                "holders": {
+                  "type": "SINGLE",
+                  "holder": [
+                    {
+                      "address": "H.No. 40&#10;Dhingra Street&#10;Lucknow 963906",
+                      "ckycCompliance": "false",
+                      "dob": "1977-10-16",
+                      "email": "hridaansuresh@setu-dummy.com",
+                      "mobile": "4866625561",
+                      "name": "Eshani Varghese",
+                      "nominee": "REGISTERED",
+                      "pan": "NZRJB1150G"
+                    }
+                  ]
+                }
+              },
+              "summary": {
+                "balanceDateTime": "2026-03-17T15:02:09+00:00",
+                "branch": "Jayanagar 7th Block",
+                "currency": "INR",
+                "currentBalance": "148204.73",
+                "currentODLimit": "225335.71",
+                "drawingLimit": "96053.48",
+                "facility": "OD",
+                "ifscCode": "DQEZ0626673",
+                "micrCode": "942879710",
+                "openingDate": "2025-12-23T15:02:09+00:00",
+                "pending": {
+                  "amount": "434579.89",
+                  "transactionType": "CREDIT"
+                },
+                "status": "ACTIVE",
+                "type": "CURRENT"
+              },
+              "transactions": {
+                "startDate": "2024-03-17",
+                "endDate": "2026-03-17",
+                "transaction": [
+                  {
+                    "amount": "40676.53",
+                    "currentBalance": "264969.7",
+                    "mode": "OTHERS",
+                    "narration": "OTHERS/DE/257792349098/Elakshi Wason/FFKX/97108211",
+                    "reference": "886877809",
+                    "transactionTimestamp": "2025-07-15T16:11:06+00:00",
+                    "txnId": "BRMO91733141918158",
+                    "type": "DEBIT",
+                    "valueDate": "2025-07-16"
+                  },
+                  {
+                    "amount": "44697.73",
+                    "currentBalance": "455942.8",
+                    "mode": "CASH",
+                    "narration": "CASH/DE/807646344714/Mehul Das/HRWM/13356435",
+                    "reference": "282776979",
+                    "transactionTimestamp": "2024-10-02T03:58:04+00:00",
+                    "txnId": "VMSI84550516944483",
+                    "type": "DEBIT",
+                    "valueDate": "2024-10-03"
+                  },
+                  {
+                    "amount": "47680.28",
+                    "currentBalance": "367997.53",
+                    "mode": "OTHERS",
+                    "narration": "OTHERS/CR/797852554079/Anvi Borra/KFOO/41177629",
+                    "reference": "186031325",
+                    "transactionTimestamp": "2024-12-10T05:54:17+00:00",
+                    "txnId": "UBDJ78716709880810",
+                    "type": "CREDIT",
+                    "valueDate": "2024-12-11"
+                  },
+                }
+            }
+          },
+          "linkRefNumber": "8a38eaaa-6308-4233-9430-35baaf4838df",
+          "FIstatus": "READY",
+          "maskedAccNumber": "XXXXXXXX6183"
+        }

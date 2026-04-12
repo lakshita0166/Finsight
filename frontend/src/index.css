@@ -1,0 +1,48 @@
+/* Base reset and fonts are loaded in index.html */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --brand-50: #faf5ff;
+  --brand-100: #f3e8ff;
+  --brand-500: #8b5cf6;
+  --brand-600: #7c3aed;
+  --brand-700: #6d28d9;
+  --brand-900: #4c1d95;
+}
+body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+/* Hero blobs */
+.hero-blob-container { position: absolute; inset: 0; overflow: hidden; z-index: 0; filter: brightness(0.92); }
+.blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; z-index: 0; }
+.blob-1 { width: 350px; height: 350px; background: linear-gradient(135deg, #fbc2eb, #a6c1ee); top: -80px; left: -80px; animation: floatAround 14s ease-in-out infinite; }
+.blob-2 { width: 280px; height: 280px; background: linear-gradient(135deg, #ff9a9e, #fad0c4); bottom: -50px; right: -50px; animation: floatAround 18s ease-in-out infinite reverse; }
+.blob-3 { width: 220px; height: 220px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); top: 40%; right: 15%; animation: floatAround 16s ease-in-out infinite 2s; }
+.blob-4 { width: 180px; height: 180px; background: linear-gradient(135deg, #fbc2eb, #feac5e); bottom: 20%; left: 10%; animation: floatAround 12s ease-in-out infinite 1s; }
+.blob-5 { width: 150px; height: 150px; background: linear-gradient(135deg, #c2e9fb, #fbc2eb); top: 15%; left: 20%; animation: floatAround 20s ease-in-out infinite 0.5s; }
+@keyframes floatAround { 0%,100%{transform:translate(0,0) rotate(0deg);}25%{transform:translate(40px,-30px) rotate(5deg);}50%{transform:translate(-20px,40px) rotate(-5deg);}75%{transform:translate(-30px,-20px) rotate(3deg);} }
+
+/* Dark overlay and light sweep */
+.hero-darken { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08)); z-index: 1; pointer-events: none; }
+.light-sweep { position: absolute; top: -20%; left: -40%; width: 60%; height: 140%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); transform: rotate(20deg) translateX(-120%); z-index: 2; pointer-events: none; animation: sweep 6s ease-in-out infinite; }
+@keyframes sweep { 0%{transform:rotate(20deg) translateX(-120%); opacity:0;}40%{opacity:1;}60%{opacity:1;}100%{transform:rotate(20deg) translateX(120%); opacity:0;} }
+
+/* Steps layout */
+.steps-container { position: relative; display: flex; justify-content: space-between; gap: 2.5rem; margin-top: 2rem; align-items: flex-start; }
+.step-item { flex: 1; text-align: center; position: relative; z-index: 5; min-width: 0; }
+.progress-line { position: absolute; top: 40px; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #e9d5ff, #c084fc, #8b5cf6); border-radius: 4px; transform-origin: left; animation: loadProgress 2.5s ease-out forwards; box-shadow: 0 0 15px #8b5cf6; z-index: 1; }
+@keyframes loadProgress { 0%{transform:scaleX(0);}100%{transform:scaleX(1);} }
+.step-icon { background: white; border: 3px solid #f3e8ff; transition: all 0.3s ease; margin-left:auto; margin-right:auto; margin-bottom:1.5rem; }
+.step-icon:hover { border-color: #8b5cf6; transform: scale(1.05); }
+.step-description { margin-top: 0.5rem; max-width:220px; margin-left:auto; margin-right:auto; line-height:1.5; color:#475569; }
+
+/* Chat + cards + other small styles kept minimal for demo */
+.chat-container { overflow: hidden; display:flex; flex-direction:column; gap:1rem; }
+.message-bubble { max-width:75%; padding:0.75rem 1rem; border-radius:1.5rem; font-size:0.9rem; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+.user-bubble { background: #f1f5f9; color:#1e293b; border-bottom-right-radius:0.25rem; }
+.bot-bubble { background: #faf5ff; border:1px solid #f3e8ff; color:#1e293b; border-bottom-left-radius:0.25rem; }
+
+/* Navbar */
+nav { transition: all 0.3s ease; }
+nav.scrolled { background: rgba(255,255,255,0.95); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+
+/* smooth scroll */
+html { scroll-behavior: smooth; }
