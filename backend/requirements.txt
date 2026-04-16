@@ -27,3 +27,4 @@ pinecone
 pdfplumber
 pandas
 openpyxl
+xlrd
