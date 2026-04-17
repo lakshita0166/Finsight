@@ -37,5 +37,5 @@ async def get_db() -> AsyncSession:
 
 async def create_tables():
     async with engine.begin() as conn:
-        from app.models import user  # noqa - import to register models
+        from app.models import user, financial_goal  # noqa - import to register models
         await conn.run_sync(Base.metadata.create_all)

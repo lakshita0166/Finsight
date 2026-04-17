@@ -67,4 +67,11 @@ export const pennyAPI = {
   }),
 }
 
+export const goalsAPI = {
+  getGoals:      ()        => api.get('/goals'),
+  createGoal:    (data)    => api.post('/goals', data),
+  deleteGoal:    (id)      => api.delete(`/goals/${id}`),
+  getSummary:    ()        => api.get('/goals/summary'),
+}
+
 export default api

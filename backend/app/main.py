@@ -6,6 +6,7 @@ from app.core.database import create_tables
 from app.routes import auth
 from app.routes import aa
 from app.routes import penny
+from app.routes import goals
 
 settings = get_settings()
 
@@ -40,6 +41,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api")
 app.include_router(aa.router,   prefix="/api")
 app.include_router(penny.router, prefix="/api")
+app.include_router(goals.router, prefix="/api")
 
 
 @app.get("/")
