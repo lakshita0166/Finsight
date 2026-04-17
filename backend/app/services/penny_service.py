@@ -249,31 +249,31 @@ def parse_bank_statement(file_bytes: bytes, filename: str, user_name: str, passw
         "DATE": [
             "date", "txn date", "transaction date", "tran date", "value date", "posting date", 
             "entry date", "effective date", "transaction on", "txn on", "valuedate", "txndate",
-            "date of transaction", "tran. date", "statement date"
+            "date of transaction", "tran. date", "statement date", "vldt", "trndate", "val date"
         ],
         "DESC": [
             "narration", "particulars", "description", "remarks", "transaction details", "details", 
             "reference", "remarks/description", "transaction remarks", "info", "transaction description", 
             "narration details", "transaction particulars", "remarks details", "desc", "transaction",
-            "subject", "trans details", "particulars details"
+            "subject", "trans details", "particulars details", "ref no", "chq/ref no", "tran particulars"
         ],
         "CREDIT": [
             "credit", "cr", "cr.", "deposit", "deposits", "credit amount", "amount cr", "paid in", 
             "receipt", "received", "received amount", "inflow", "credit value", "cr amount",
-            "deposit amt", "credits", "pay in", "money in"
+            "deposit amt", "credits", "pay in", "money in", "withdrawal(cr)", "deposit(cr)"
         ],
         "DEBIT": [
             "debit", "dr", "dr.", "withdrawal", "withdrawals", "debit amount", "amount dr", "paid out", 
             "payment", "spent", "outflow", "debit value", "dr amount", "withdrawal amt", "debits",
-            "pay out", "money out"
+            "pay out", "money out", "withdrawal(dr)", "payment(dr)"
         ],
         "BALANCE": [
             "balance", "bal", "bal.", "closing balance", "running balance", "available balance", 
             "ledger balance", "current balance", "balance amount", "available amt", "ledger amt",
-            "total balance", "account balance", "running bal", "bal amt", "cl. bal", "closing bal"
+            "total balance", "account balance", "running bal", "bal amt", "cl. bal", "closing bal", "balance(inr)"
         ],
         "AMOUNT": [
-            "amount", "txn amount", "transaction amount", "value", "total amount", "amt", "txn amt"
+            "amount", "txn amount", "transaction amount", "value", "total amount", "amt", "txn amt", "amount(inr)", "txn value"
         ]
     }
 
@@ -283,7 +283,7 @@ def parse_bank_statement(file_bytes: bytes, filename: str, user_name: str, passw
     # Detect if this is a piped structured format (from CSV/Excel)
     is_piped = False
     if lines:
-        for l in lines[:5]:
+        for l in lines[:100]: # Check more lines for tabular structure
             if "|" in l:
                 is_piped = True
                 break
@@ -549,23 +549,32 @@ def _extract_text_from_file(file_bytes: bytes, filename: str, password: str = No
         try:
             import pandas as pd
             import io
-            import sys
-            logger.info("Processing tabular file using: %s", sys.executable)
+            
+            # Robust logic: find the actual header row for both CSV and Excel
             if fname.endswith(".csv"):
-                # Robust CSV reading: find the actual header row
-                import io
-                content_sample = file_bytes[:20000].decode('utf-8', errors='ignore')
+                content_sample = file_bytes[:50000].decode('utf-8', errors='ignore')
                 sample_lines = content_sample.split('\n')
                 skip_count = 0
-                for i, line in enumerate(sample_lines[:50]):
+                for i, line in enumerate(sample_lines[:100]):
                     l_low = line.lower()
-                    if any(k in l_low for k in ["date", "transaction", "narration", "particulars"]):
+                    if any(k in l_low for k in ["date", "transaction", "narration", "particulars", "description"]):
                         skip_count = i
                         break
-                
                 df = pd.read_csv(io.BytesIO(file_bytes), skiprows=skip_count, on_bad_lines='skip')
             else:
-                df = pd.read_excel(io.BytesIO(file_bytes))
+                # For Excel, we scan the first 50 rows to find headers
+                excel_file = io.BytesIO(file_bytes)
+                temp_df = pd.read_excel(excel_file, header=None, nrows=100)
+                skip_count = 0
+                for i, row in temp_df.iterrows():
+                    row_str = " ".join(str(val).lower() for val in row.values)
+                    if any(k in row_str for k in ["date", "transaction", "narration", "particulars", "description"]):
+                        skip_count = i
+                        break
+                # Re-read with correct header
+                excel_file.seek(0)
+                df = pd.read_excel(excel_file, skiprows=skip_count)
+
             # Return piped format for robust parsing in parse_bank_statement
             return df.to_csv(index=False, sep='|')
         except Exception as e:
