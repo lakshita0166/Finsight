@@ -462,15 +462,19 @@ def get_user_transactions(user_id: str, limit: int = None, fi_data_ids: List[int
         cur.close(); conn.close()
 
 
-def get_user_summary(user_id: str, month: int = None, year: int = None) -> Dict:
+def get_user_summary(user_id: str, month: int = None, year: int = None, fi_data_id: int = None) -> Dict:
     conn = get_connection(); cur = conn.cursor(cursor_factory=extras.RealDictCursor)
     try:
-        # Get all accounts for this user
-        cur.execute("SELECT fi_data_id FROM fi_data WHERE user_id = %s", (user_id,))
-        acc_ids = [r['fi_data_id'] for r in cur.fetchall()]
+        # Get accounts
+        if fi_data_id:
+            acc_ids = [fi_data_id]
+        else:
+            cur.execute("SELECT fi_data_id FROM fi_data WHERE user_id = %s", (user_id,))
+            acc_ids = [r['fi_data_id'] for r in cur.fetchall()]
         
         total_bal = 0
         income_types = ('CREDIT','INTEREST','OPENING','REFUND','DEPOSIT','INWARD','REVERSAL')
+        expense_types = ('DEBIT','TDS','PAYMENT','INSTALLMENT','WITHDRAWAL','OUTWARD','FEES','CHARGES','TAX','OTHERS')
         
         for aid in acc_ids:
             # Try to get stored balance (Savings/Investments/FDs)
@@ -508,14 +512,17 @@ def get_user_summary(user_id: str, month: int = None, year: int = None) -> Dict:
         query = """
             SELECT
                 COALESCE(SUM(CASE WHEN txn_type IN %s THEN amount ELSE 0 END), 0) AS total_income,
-                COALESCE(SUM(CASE WHEN txn_type IN ('DEBIT','TDS','PAYMENT','INSTALLMENT','WITHDRAWAL','OUTWARD','FEES','CHARGES','TAX','OTHERS') THEN amount ELSE 0 END), 0) AS total_expenses
+                COALESCE(SUM(CASE WHEN txn_type IN %s THEN amount ELSE 0 END), 0) AS total_expenses
             FROM transactions
             WHERE user_id = %s
         """
-        params = [income_types, user_id]
+        params = [income_types, expense_types, user_id]
         if month and year:
             query += " AND EXTRACT(MONTH FROM txn_date) = %s AND EXTRACT(YEAR FROM txn_date) = %s"
             params.extend([month, year])
+        if fi_data_id:
+            query += " AND fi_data_id = %s"
+            params.append(fi_data_id)
         
         cur.execute(query, tuple(params))
         row = cur.fetchone()
@@ -525,6 +532,46 @@ def get_user_summary(user_id: str, month: int = None, year: int = None) -> Dict:
             "total_balance":  total_bal,
             "total_income":   float(res["total_income"]),
             "total_expenses": float(res["total_expenses"])
+        }
+    finally:
+        cur.close(); conn.close()
+
+
+def get_user_range_summary(user_id: str, sm: int, sy: int, em: int, ey: int, fi_data_id: int = None) -> Dict:
+    """
+    Sum income and expenses across a month/year range inclusive.
+    """
+    conn = get_connection(); cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+    try:
+        # Range logic: convert to (year * 12 + month) for simple comparison
+        start_val = sy * 12 + sm
+        end_val = ey * 12 + em
+        
+        income_types = ('CREDIT','INTEREST','OPENING','REFUND','DEPOSIT','INWARD','REVERSAL')
+        expense_types = ('DEBIT','TDS','PAYMENT','INSTALLMENT','WITHDRAWAL','OUTWARD','FEES','CHARGES','TAX','OTHERS')
+
+        query = """
+            SELECT
+                COALESCE(SUM(CASE WHEN txn_type IN %s THEN amount ELSE 0 END), 0) AS total_income,
+                COALESCE(SUM(CASE WHEN txn_type IN %s THEN amount ELSE 0 END), 0) AS total_expenses
+            FROM transactions
+            WHERE user_id = %s
+              AND (EXTRACT(YEAR FROM txn_date) * 12 + EXTRACT(MONTH FROM txn_date)) >= %s
+              AND (EXTRACT(YEAR FROM txn_date) * 12 + EXTRACT(MONTH FROM txn_date)) <= %s
+        """
+        params = [income_types, expense_types, user_id, start_val, end_val]
+        if fi_data_id:
+            query += " AND fi_data_id = %s"
+            params.append(fi_data_id)
+
+        cur.execute(query, tuple(params))
+        row = cur.fetchone()
+        res = dict(row) if row else {"total_income": 0, "total_expenses": 0}
+
+        return {
+            "total_income":   float(res["total_income"]),
+            "total_expenses": float(res["total_expenses"]),
+            "net_savings":    float(res["total_income"]) - float(res["total_expenses"])
         }
     finally:
         cur.close(); conn.close()

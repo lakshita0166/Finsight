@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import DashboardLayout from '../components/DashboardLayout'
 import { useAuth } from '../context/AuthContext'
-import { aaAPI } from '../services/api'
+import { aaAPI, goalsAPI } from '../services/api'
 import {
   Chart as ChartJS,
   ArcElement,
@@ -74,6 +74,8 @@ export default function Dashboard() {
   const [allTxns, setAllTxns] = useState([])
   const [dbBreakdown, setDbBreakdown] = useState([])
   const [dbSummary, setDbSummary] = useState({})
+  const [goalsSummary, setGoalsSummary] = useState({ total_active: 0, spending_on_track: 0, spending_exceeded: 0 })
+  const [userGoals, setUserGoals] = useState([])
   const [selectedAccount, setSelectedAccount] = useState('all')
   const [month, setMonth] = useState(new Date().getMonth() + 1)
   const [year, setYear] = useState(new Date().getFullYear())
@@ -86,6 +88,12 @@ export default function Dashboard() {
       setAllTxns(res.data.transactions ?? [])
       setDbBreakdown(res.data.breakdown?.breakdown ?? [])
       setDbSummary(res.data.summary ?? {})
+      
+      const gSum = await goalsAPI.getSummary()
+      setGoalsSummary(gSum.data)
+      const gList = await goalsAPI.getGoals()
+      setUserGoals(gList.data.goals)
+
       setStatus(res.data.accounts?.length === 0 ? 'empty' : 'ok')
     } catch (e) {
       console.error('Dashboard load failed:', e)
@@ -393,6 +401,33 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Goals Summary Card */}
+        {goalsSummary.total_active > 0 && (
+          <div className="bg-brand-600 p-6 rounded-2xl shadow-xl shadow-brand-100 flex flex-col md:flex-row items-center justify-between gap-6 text-white overflow-hidden relative">
+            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">🎯</span>
+                <h3 className="text-lg font-black tracking-tight">Active Financial Goals</h3>
+              </div>
+              <p className="text-sm font-medium text-brand-100">
+                You have <span className="text-white font-bold">{goalsSummary.total_active}</span> tracking goals. 
+                {goalsSummary.spending_exceeded > 0 ? (
+                  <> Stay alert, <span className="text-white font-bold underline decoration-red-400">{goalsSummary.spending_exceeded} limits</span> have been exceeded.</>
+                ) : (
+                  <> Great job! All your spending limits are currently on track.</>
+                )}
+              </p>
+            </div>
+            <Link 
+              to="/goals"
+              className="relative z-10 bg-white text-brand-600 font-bold px-6 py-2.5 rounded-xl text-xs hover:bg-brand-50 transition-colors shrink-0"
+            >
+              Analyze Goals →
+            </Link>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Categorized Spending */}
           <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
@@ -426,19 +461,37 @@ export default function Dashboard() {
               )}
             </div>
             <div className="mt-6 space-y-2">
-              {activeData.categories.map((cat, i) => (
-                <div 
-                  key={`${cat[0]}-${i}`} 
-                  onClick={() => handleCategoryClick(cat[0])}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}></span>
-                    <span className="text-xs text-slate-600 truncate">{CATEGORY_ICONS[cat[0]] || '🔹'} {cat[0]}</span>
+              {activeData.categories.map((cat, i) => {
+                const goal = userGoals.find(g => g.category === cat[0])
+                const isExceeded = goal && (cat[1] > goal.target_amount)
+                
+                return (
+                  <div 
+                    key={`${cat[0]}-${i}`} 
+                    onClick={() => handleCategoryClick(cat[0])}
+                    className="group flex flex-col p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}></span>
+                        <span className="text-xs text-slate-600 truncate">{CATEGORY_ICONS[cat[0]] || '🔹'} {cat[0]}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {goal && <span className={`text-[9px] font-black uppercase ${isExceeded ? 'text-red-500' : 'text-slate-400'}`}>{isExceeded ? 'Exceeded' : 'Limit set'}</span>}
+                        <span className="text-xs font-bold text-slate-700">{fmt(cat[1])}</span>
+                      </div>
+                    </div>
+                    {goal && (
+                      <div className="ml-4 h-1 bg-slate-100 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full transition-all duration-500 ${isExceeded ? 'bg-red-500' : 'bg-brand-300'}`}
+                          style={{ width: `${Math.min(100, (cat[1] / goal.target_amount) * 100)}%` }}
+                        ></div>
+                      </div>
+                    )}
                   </div>
-                  <span className="text-xs font-bold text-slate-700">{((cat[1]/activeData.expense)*100).toFixed(0)}%</span>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
 
