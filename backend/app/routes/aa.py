@@ -132,15 +132,17 @@ async def setu_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 
 @router.get("/fi-data")
 async def get_fi_data(
-    db:   AsyncSession = Depends(get_db),
-    user: User         = Depends(get_current_user),
+    month: int = None,
+    year:  int = None,
+    db:    AsyncSession = Depends(get_db),
+    user:  User         = Depends(get_current_user),
 ):
     """
     Returns accounts + transactions + summary for the logged-in user.
     Always user-scoped — all sessions merged, deduplicated at DB level.
     """
     user_id = str(user.id)
-    logger.info("GET /fi-data user=%s", user_id)
+    logger.info("GET /fi-data user=%s month=%s year=%s", user_id, month, year)
 
     from app.core.db_config import (
         get_user_accounts, get_user_transactions,
@@ -150,8 +152,8 @@ async def get_fi_data(
     try:
         accounts     = get_user_accounts(user_id)
         transactions = get_user_transactions(user_id)
-        summary      = get_user_summary(user_id)
-        breakdown    = get_category_breakdown(user_id)
+        summary      = get_user_summary(user_id, month=month, year=year)
+        breakdown    = get_category_breakdown(user_id, month=month, year=year)
     except Exception as e:
         logger.error("fi-data query failed: %s", e, exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
@@ -382,18 +384,28 @@ async def get_categories(user: User = Depends(get_current_user)):
     conn = get_connection(); cur = conn.cursor(cursor_factory=_extras.RealDictCursor)
     try:
         # Built-in categories
+        # Built-in categories (20-category framework)
         builtin = [
-            {"category": "Digital Payments",   "subcategories": ["UPI Transfer", "UPI Transfer (Credit)", "UPI Transfer (Debit)"]},
-            {"category": "Bank Transfer",       "subcategories": ["NEFT", "IMPS", "Fund Transfer", "RTGS", "ECS/Auto Debit", "ACH", "NACH"]},
-            {"category": "Card",                "subcategories": ["Card Payment", "Card Payment (Credit)", "Card Payment (Debit)"]},
-            {"category": "Cash",                "subcategories": ["Cash Transaction", "ATM Withdrawal"]},
-            {"category": "Investment Returns",  "subcategories": ["Interest Income"]},
-            {"category": "Tax",                 "subcategories": ["Tax Deducted at Source"]},
-            {"category": "Account",             "subcategories": ["Account Opening"]},
-            {"category": "Investment",          "subcategories": ["Redemption", "Renewal"]},
-            {"category": "Income",              "subcategories": ["Credit", "Salary", "Bonus", "Dividend"]},
-            {"category": "Expense",             "subcategories": ["Debit", "Utilities", "Groceries", "Food", "Shopping", "Travel", "Healthcare", "Entertainment", "Rent"]},
-            {"category": "Other",               "subcategories": ["Other"]},
+            {"category": "Food & Dining", "subcategories": ["Restaurants/Cafe", "Groceries"]},
+            {"category": "Transportation", "subcategories": ["Fuel", "Taxi/Ride Hailing", "Public Transport"]},
+            {"category": "Shopping & Retail", "subcategories": ["E-commerce", "Clothing & Fashion", "Electronics"]},
+            {"category": "Bills & Utilities", "subcategories": ["Utilities/BillPay"]},
+            {"category": "Housing & Rent", "subcategories": ["Rent/Maintenance"]},
+            {"category": "Healthcare & Medical", "subcategories": ["Medical/Healthcare"]},
+            {"category": "Entertainment & Leisure", "subcategories": ["Sub/Movies/Events"]},
+            {"category": "Travel", "subcategories": ["Hotel/Flight"]},
+            {"category": "Education", "subcategories": ["Education/Fees"]},
+            {"category": "Investments & Savings", "subcategories": ["Investments", "Interest Income", "Redemption", "Renewal"]},
+            {"category": "Insurance", "subcategories": ["Insurance Premium"]},
+            {"category": "Salary & Income", "subcategories": ["Salary/Payroll", "Refund/Cashback", "Freelance/Bonus", "Credit"]},
+            {"category": "Transfers", "subcategories": ["Transfers", "UPI", "NEFT", "IMPS", "Fund Transfer", "RTGS", "Card Payment", "ACH", "NACH"]},
+            {"category": "Taxes & Government", "subcategories": ["Tax/Govt Fees", "Tax Deducted at Source"]},
+            {"category": "ATM / Cash Withdrawal", "subcategories": ["Cash Transaction", "Cash", "ATM"]},
+            {"category": "Fees & Charges", "subcategories": ["Bank Fees/Penalty"]},
+            {"category": "Donations & Charity", "subcategories": ["Donations"]},
+            {"category": "Business / Professional Expenses", "subcategories": ["Business/Professional"]},
+            {"category": "Subscription Services", "subcategories": ["Subscriptions"]},
+            {"category": "Uncategorized / Unknown", "subcategories": ["Debit", "Other"]},
         ]
         # Also fetch any custom categories this user has created
         cur.execute("""
@@ -422,3 +434,32 @@ async def get_categories(user: User = Depends(get_current_user)):
         return {"builtin": builtin, "custom": custom_list}
     finally:
         cur.close(); conn.close()
+@router.get("/user-summary")
+async def get_user_summary_route(
+    month: int = None,
+    year: int = None,
+    user: User = Depends(get_current_user)
+):
+    from app.core.db_config import get_user_summary
+    return get_user_summary(str(user.id), month, year)
+
+
+@router.get("/category-breakdown")
+async def get_category_breakdown_route(
+    month: int = None,
+    year: int = None,
+    user: User = Depends(get_current_user)
+):
+    from app.core.db_config import get_category_breakdown
+    return get_category_breakdown(str(user.id), month, year)
+
+
+@router.get("/category-drilldown")
+async def get_category_drilldown_route(
+    category: str,
+    month: int = None,
+    year: int = None,
+    user: User = Depends(get_current_user)
+):
+    from app.core.db_config import get_category_drilldown
+    return get_category_drilldown(str(user.id), category, month, year)

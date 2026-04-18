@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import PennyChatPanel from './PennyChatPanel'
 
 export default function DashboardLayout({ title = 'Dashboard', rightElement = null, children }) {
   const { user, logout } = useAuth()
@@ -23,6 +24,7 @@ export default function DashboardLayout({ title = 'Dashboard', rightElement = nu
     { to: '/transactions',  label: 'Transactions', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
     { to: '/consent',       label: 'Consent',      icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
     { to: '/assistant',     label: 'AI Assistant', icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z' },
+    { to: '/goals',         label: 'Goals',        icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
   ]
 
   return (
@@ -142,6 +144,8 @@ export default function DashboardLayout({ title = 'Dashboard', rightElement = nu
           {children}
         </main>
       </div>
+      {/* Penny — floats on every page */}
+      <PennyChatPanel />
     </div>
   )
 }

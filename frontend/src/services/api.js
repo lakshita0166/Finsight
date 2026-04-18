@@ -50,18 +50,43 @@ export const aaAPI = {
   fetchData:         (consentId)  => api.post(`/aa/fetch-data/${consentId}`),
   getMyConsent:      ()           => api.get('/aa/my-consent'),
   revokeConsent:     (consentId)  => api.delete(`/aa/revoke-consent/${consentId}`),
-  getFIData:         ()           => api.get('/aa/fi-data'),
+  getFIData:         (params)     => api.get('/aa/fi-data', { params }),
   getCategories:     ()           => api.get('/aa/categories'),
   updateCategory:    (data)       => api.patch('/aa/transaction/category', data),
+  getUserSummary:    (month, year) => api.get('/aa/user-summary', { params: { month, year } }),
+  getCategoryBreakdown: (month, year) => api.get('/aa/category-breakdown', { params: { month, year } }),
+  getCategoryDrilldown: (category, month, year) => api.get('/aa/category-drilldown', { params: { category, month, year } }),
 }
 
 export const pennyAPI = {
-  chat:           (data)   => api.post('/penny/chat', data),
-  getInsights:    ()       => api.get('/penny/insights'),
-  autoCategorize: (data)   => api.post('/penny/auto-categorize', data),
-  uploadStatement:(formData) => api.post('/penny/upload-statement', formData, {
+  // SSE streaming chat — returns a fetch Response for manual stream reading
+  chatStream: async (question, history = []) => {
+    const token = localStorage.getItem('access_token')
+    return fetch('/api/penny/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ question, messages: history }),
+    })
+  },
+  getInsights:     ()       => api.get('/penny/insights'),
+  autoCategorize:  (data)   => api.post('/penny/auto-categorize', data),
+  uploadStatement: (formData) => api.post('/penny/upload-statement', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  getHistory:      ()       => api.get('/penny/history'),
+  clearHistory:    ()       => api.delete('/penny/history'),
+  submitFeedback:  (data)   => api.post('/penny/feedback', data),
+  refreshVectors:  ()       => api.post('/penny/refresh-vectors'),
+}
+
+export const goalsAPI = {
+  getGoals:      ()        => api.get('/goals'),
+  createGoal:    (data)    => api.post('/goals', data),
+  deleteGoal:    (id)      => api.delete(`/goals/${id}`),
+  getSummary:    ()        => api.get('/goals/summary'),
 }
 
 export default api

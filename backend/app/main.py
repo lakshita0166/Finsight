@@ -6,6 +6,7 @@ from app.core.database import create_tables
 from app.routes import auth
 from app.routes import aa
 from app.routes import penny
+from app.routes import goals
 
 settings = get_settings()
 
@@ -13,6 +14,8 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_tables()
+    from app.core.db_config import init_penny_tables
+    init_penny_tables()
     print(f"✅ FinSight API started | env={settings.APP_ENV}")
     yield
     print("FinSight API shutting down")
@@ -40,6 +43,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api")
 app.include_router(aa.router,   prefix="/api")
 app.include_router(penny.router, prefix="/api")
+app.include_router(goals.router, prefix="/api")
 
 
 @app.get("/")
