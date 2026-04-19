@@ -104,14 +104,14 @@ def classify_transaction(mode: str, txn_type: str, narration: str = "") -> tuple
                              "PIZZA", "DOMINO", "BURGER KING", "SUBWAY", "STARBUCKS", "CCD"]):
         return ("Food & Dining", "Restaurants/Cafe")
     if any(w in n for w in ["GROCERY", "DMART", "RELIANCE FRESH", "JIOMART", "BLINKIT",
-                             "ZEPTO", "INSTAMART", "BIGBASKET", "GROFERS", "MORE RETAIL"]):
-        return ("Food & Dining", "Groceries")
+                             "ZEPTO", "INSTAMART", "BIGBASKET", "GROFERS", "MORE RETAIL", "SUPERMARKET"]):
+        return ("Groceries", "")
 
     # --- Healthcare & Medical ---
     if any(w in n for w in ["APOLLO", "MEDPLUS", "PRACTO", "PHARMEASY", "NETMEDS", "HOSPITAL",
                              "CLINIC", "DOCTOR", "PHARMACY", "MEDICINE", "MEDICAL",
                              "THYROCARE", "LENSKART", "HEALTHKART", "NARAYANA", "FORTIS"]):
-        return ("Healthcare", "Healthcare/Medical")
+        return ("Healthcare & Medical", "Healthcare/Medical")
 
     # --- Education ---
     if any(w in n for w in ["BYJU", "UNACADEMY", "COURSERA", "UDEMY", "SKILL INDIA",
@@ -123,7 +123,7 @@ def classify_transaction(mode: str, txn_type: str, narration: str = "") -> tuple
     if any(w in n for w in ["NETFLIX", "PRIME VIDEO", "HOTSTAR", "SPOTIFY", "YOUTUBE PREMIUM",
                              "APPLE MUSIC", "AMAZON PRIME", "DISNEY PLUS", "GAANA", "JIOSAAVN",
                              "MULTIPLEX", "PVR", "INOX", "BOOKMYSHOW", "SONYLIV", "VOOT"]):
-        return ("Entertainment", "Entertainment/Subscriptions")
+        return ("Entertainment & Leisure", "Entertainment/Subscriptions")
 
     # --- Transportation ---
     if any(w in n for w in ["PETROL", "FUEL", "HPCL", "BPCL", "IOCL", "SHELL", "INDIAN OIL"]):

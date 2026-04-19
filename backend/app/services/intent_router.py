@@ -294,7 +294,7 @@ def resolve_intent(intent: str, user_id: str, question: str) -> Dict[str, Any]:
 
         elif intent == "transaction_lookup":
             from app.core.db_config import (
-                get_transactions_filtered, get_subcategory_breakdown,
+                get_transactions_filtered,
                 search_transactions_by_keyword
             )
             q_lower = question.lower()
@@ -347,12 +347,12 @@ def resolve_intent(intent: str, user_id: str, question: str) -> Dict[str, Any]:
                 )
 
             # Also get subcategory breakdown for context
-            subcat = get_subcategory_breakdown(user_id, month=month, year=year, category=detected_category)
+            subcat = []
 
             return {
                 "intent": intent,
                 "transactions": txns,
-                "subcategory_breakdown": subcat[:10],
+                
                 "detected_category": detected_category,
                 "merchant_keyword": merchant_kw,
                 "month": month, "year": year
@@ -510,12 +510,7 @@ def format_db_facts(facts: Dict[str, Any]) -> str:
                 f"• {t.get('txn_date')} | {t.get('account_type','?')} {acc} | "
                 f"{t.get('txn_type','?')} \u20b9{t.get('amount', 0):,.0f} | {narr}"
             )
-        # Add subcategory breakdown if available
-        subcats = facts.get('subcategory_breakdown', [])
-        if subcats:
-            lines.append("Subcategory breakdown:")
-            for s in subcats[:6]:
-                lines.append(f"  {s.get('subcategory','?')}: \u20b9{s.get('spent', 0):,.0f} ({s.get('txn_count',0)} txns)")
+        
 
     elif intent == "account_transactions":
         matched = facts.get('matched_account', 'your account')
